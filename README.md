@@ -22,6 +22,8 @@
 | 11 | [11-STFT-fale](11-STFT-fale/instrukcja.md) | STFT + fale |
 | 12 | [12-Kompresja](12-Kompresja/instrukcja.md) | Kompresja + DCT |
 
+Każda instrukcja zawiera obecnie **trzy przykłady** z komentarzem interpretacyjnym oraz **co najmniej cztery zadania** do samodzielnego wykonania.
+
 ---
 
 ## Struktura repozytorium
@@ -33,18 +35,21 @@ DSP-Laboratoria-2026/
 │   ├── instrukcja.md
 │   └── przyklady/
 │       ├── przyklad1.m
-│       └── przyklad2.m
+│       ├── przyklad2.m
+│       └── przyklad3.m
 ├── 02-Probkowanie/
 │   ├── instrukcja.md
 │   └── przyklady/
 │       ├── przyklad1.m
-│       └── przyklad2.m
+│       ├── przyklad2.m
+│       └── przyklad3.m
 ...
 └── 12-Kompresja/
     ├── instrukcja.md
     └── przyklady/
         ├── przyklad1.m
-        └── przyklad2.m
+        ├── przyklad2.m
+        └── przyklad3.m
 ```
 
 ## Sprawozdania
@@ -55,11 +60,12 @@ Każde sprawozdanie należy oddać na **Microsoft Teams** jako jeden plik PDF:
 Sprawozdanie_LabN_ImieNazwisko.pdf
 ```
 
-Zawartość sprawozdania:
-1. Tytuł + imię i nazwisko
-2. Zrzuty ekranu z wynikami
-3. Wnioski (własnymi słowami)
-4. Kod źródłowy
+Minimalna zawartość sprawozdania:
+1. Strona tytułowa: imię i nazwisko, temat laboratorium, data wykonania.
+2. Wnioski i spostrzeżenia z przykładów 1–3, w tym wpływ zmian parametrów na wykresy i wyniki.
+3. Dla każdego zadania: koncepcja rozwiązania, kod, wyniki oraz wnioski.
+4. Podsumowanie całego laboratorium.
+5. Numerowane i podpisane wykresy oraz odwołania w tekście do wykresów i kodu.
 
 ---
 
