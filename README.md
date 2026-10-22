@@ -22,7 +22,10 @@
 | 11 | [11-STFT-fale](11-STFT-fale/instrukcja.md) | STFT + fale |
 | 12 | [12-Kompresja](12-Kompresja/instrukcja.md) | Kompresja + DCT |
 
-Każda instrukcja zawiera obecnie **trzy przykłady** z komentarzem interpretacyjnym oraz **co najmniej cztery zadania** do samodzielnego wykonania.
+Każda instrukcja zawiera **trzy przykłady** z komentarzem interpretacyjnym i sekcją „Twoja kolej – swobodny eksperyment” oraz **cztery zadania** (ocena **4.0**). Od Lab 2 dochodzi **Zadanie 5★** (ocena **5.0**) – trudniejsze, łączące bieżący temat z zagadnieniami z poprzednich ćwiczeń.
+
+### Losowość parametrów
+Zadania 1–2 są wspólne dla wszystkich, a Zadania 3–4 i 5★ korzystają z parametrów losowanych na podstawie numeru albumu (`nr` = ostatnie 4 cyfry, `rand('state', nr)`). Dzięki temu każde sprawozdanie jest inne, a wyniki są powtarzalne. Kod losowania i wylosowane wartości należy zamieścić w sprawozdaniu.
 
 ---
 
@@ -62,10 +65,11 @@ Sprawozdanie_LabN_ImieNazwisko.pdf
 
 Minimalna zawartość sprawozdania:
 1. Strona tytułowa: imię i nazwisko, temat laboratorium, data wykonania.
-2. Wnioski i spostrzeżenia z przykładów 1–3, w tym wpływ zmian parametrów na wykresy i wyniki.
-3. Dla każdego zadania: koncepcja rozwiązania, kod, wyniki oraz wnioski.
-4. Podsumowanie całego laboratorium.
-5. Numerowane i podpisane wykresy oraz odwołania w tekście do wykresów i kodu.
+2. Numer `nr` i wylosowane parametry.
+3. Wnioski i spostrzeżenia z przykładów 1–3, w tym wpływ zmian parametrów na wykresy i wyniki oraz wybrany swobodny eksperyment.
+4. Dla każdego zadania (1–4, a dla oceny 5.0 także 5★): koncepcja rozwiązania, kod, wyniki oraz wnioski.
+5. Podsumowanie całego laboratorium.
+6. Numerowane i podpisane wykresy oraz odwołania w tekście do wykresów i kodu.
 
 ---
 

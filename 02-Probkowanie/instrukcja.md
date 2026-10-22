@@ -78,6 +78,11 @@ title('Niedoprobkowanie (fs=7 Hz < 2*f) - ALIASING'); xlabel('t [s]'); grid on;
 - Zmień `f_sygnal` na `10 Hz` i sprawdź, jak muszą zmienić się wartości `fs_ok` i `fs_bad`, aby utrzymać lub złamać warunek Nyquista.
 - Warto także wydłużyć czas `T`, ponieważ dłuższa obserwacja ułatwia zauważenie błędnej częstotliwości wynikającej z aliasingu.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zamiast `fs_bad = 7` wybierz własną wartość i **przewidź** pozorną częstotliwość ze wzoru `|f - k·fs|` zanim uruchomisz kod – potem sprawdź, czy miałeś rację.
+- Zbadaj, co się dzieje dokładnie przy `fs = 2·f` (granica Nyquista) dla różnych faz sygnału – dlaczego wynik bywa mylący?
+- Sprawdź wpływ `T` (0.5, 1, 3 s) na to, jak łatwo „zobaczyć” alias.
+
 ## 5. PRZYKŁAD 2: Kwantyzacja sygnału
 
 ```octave
@@ -121,6 +126,11 @@ fprintf('Maksymalny blad kwantyzacji 3-bit: %.4f\n', max(abs(blad)));
 - Zmień `bits` na `2`, `4` i `6`, aby sprawdzić, jak maleje maksymalny błąd kwantyzacji wraz ze wzrostem rozdzielczości.
 - Jeżeli zwiększysz amplitudę sygnału lub zmienisz zakres wartości, zwróć uwagę, że ten sam liczbowy krok kwantyzacji może generować inną względną jakość odwzorowania.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zdefiniuj własny sygnał (np. sumę dwóch sinusów albo piłę) i zmierz błąd kwantyzacji dla `bits = 2..8`; narysuj wykres `bits` vs. maksymalny błąd.
+- Porównaj wynik z przybliżeniem teoretycznym `Delta/2` i skomentuj różnice.
+- Zbadaj, co się dzieje, gdy sygnał ma amplitudę `0.1` zamiast `1` przy tych samych bitach – dlaczego jakość spada?
+
 ## 6. PRZYKŁAD 3: Próbkowanie sumy dwóch składowych i obserwacja aliasingu
 
 ```octave
@@ -160,17 +170,52 @@ end
 - Zmień `f2` na `8 Hz` albo zwiększ `fs_list` do wartości powyżej `22 Hz`, aby sprawdzić, kiedy wszystkie składowe są reprezentowane poprawnie.
 - Przykład przygotowuje grunt pod dalszą analizę widmową, w której aliasing będzie obserwowany również w dziedzinie częstotliwości.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Dobierz własne `f1`, `f2` i `fs_list` tak, aby jedna składowa była poprawnie próbkowana, a druga nie; udokumentuj to wykresem.
+- Zamiast oceniać „na oko”, oblicz dla każdego `fs` częstotliwość pozorną obu składowych i zapisz ją w tabeli.
+- Zaproponuj, jak zmienić `fs`, by minimalnym kosztem uniknąć aliasingu, i uzasadnij wybór.
+
 ## 7. ZADANIA
 
 W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz z wcześniejszych zajęć. Jeżeli dana technika była już pokazana wcześniej, odwołaj się do niej zamiast niepotrzebnie powielać cały kod od zera.
+
+### 7.1 Zasady oceny i swoboda pracy
+- Wszystkie zadania **1–4** odpowiadają ocenie **4.0**. Ocenę **5.0** można uzyskać dodatkowo za **Zadanie 5★**, które jest trudniejsze i wymaga połączenia bieżącego tematu z zagadnieniami z poprzednich ćwiczeń (wskazane w treści zadania).
+- Zadania **1–2** są takie same dla wszystkich (podstawy). Zadania **3–4** oraz Zadanie 5★ mają **parametry losowe**, więc każde sprawozdanie będzie inne – nie kopiuj wyników od innych osób.
+- W zadaniach „swobodnych” sam wybierasz sygnały, metody, rozmiary i kryteria; **musisz** jednak uzasadnić swoje decyzje liczbami i wykresami.
+
+### 7.2 Losowanie parametrów (wykonaj na początku skryptu)
+Wpisz ostatnie 4 cyfry swojego numeru albumu do zmiennej `nr` – dzięki `rand('state', nr)` ten sam numer zawsze daje te same parametry (powtarzalność), a różne numery dają różne sprawozdania. **Wartości wylosowanych parametrów wypisz w sprawozdaniu.**
+
+```octave
+nr = 1234;                  % <- ostatnie 4 cyfry numeru albumu
+rand('state', nr); randn('state', nr);
+
+f1  = randi([6 14]);                % skladowa 1 [Hz]
+f2  = f1 + randi([3 9]);            % skladowa 2 [Hz]
+fs_bad = randi([f2+2, 2*f2-1]);     % niedoprobkowanie: fs < 2*f2
+bits = sort(randperm(7, 3) + 1);    % trzy rozne rozdzielczosci z zakresu 2..8 bitow
+fprintf('f1=%d f2=%d fs_bad=%d bits=%s\n', f1, f2, fs_bad, mat2str(bits));
+% --- do zadania 5* ---
+b5 = randi([3 8]);                          % bity kwantyzacji
+fs5 = round((1.1 + 1.9*rand()) * f2);       % fs z przedzialu [1.1, 3]*f_max (czesto < 2*f_max!)
+```
+
+### 7.3 Zadania na ocenę 4.0
 
 1. **Zadanie 1:** Zbadaj próbkowanie sygnału `f = 10 Hz`. Sprawdź, co się dzieje przy `fs = 25 Hz`, `fs = 20 Hz` i `fs = 15 Hz`. Kiedy pojawia się aliasing?
 
 2. **Zadanie 2:** Wykonaj kwantyzację sygnału trójkątnego (`sawtooth`) przy rozdzielczości 2, 4 i 8 bitów. Oblicz i porównaj błędy kwantyzacji.
 
-3. **Zadanie 3:** Wyznacz minimalną częstotliwość próbkowania dla sygnału będącego sumą dwóch sinusów: `sin(2π·8t) + sin(2π·15t)`.
+3. **Zadanie 3 (losowe):** Dla sygnału `sin(2π·f1·t) + sin(2π·f2·t)` z wylosowanymi `f1`, `f2` wyznacz minimalną częstotliwość próbkowania spełniającą warunek Nyquista. Próbkuj sygnał z `fs` równym minimum, z `fs_bad` oraz z `1.5·fs_min` i porównaj wykresy. Dla `fs_bad` oblicz teoretycznie częstotliwości pozorne obu składowych i potwierdź je w Octave.
 
-4. **Zadanie 4:** Dla własnego sygnału złożonego z co najmniej dwóch sinusoid wyznacz minimalną częstotliwość próbkowania zapewniającą brak aliasingu. Następnie wykonaj próbki przy wartości poprawnej i zbyt małej oraz porównaj wyniki na wykresach.
+4. **Zadanie 4 (losowe, swoboda):** Wygeneruj własny sygnał z trzech składowych (częstotliwości z `sort(randperm(30, 3))`, amplitudy dobierz sam). Skwantyzuj go przy wylosowanych rozdzielczościach `bits` i dla każdej wylosowanej wartości oblicz błąd maksymalny oraz SNR kwantyzacji. Porównaj wyniki z regułą `SNR ≈ 6.02·b + 1.76 dB` (dla sinusa) i wyjaśnij odchylenia.
+
+### 7.4 Zadanie na ocenę 5.0
+
+5. **Zadanie 5★ (na 5.0):** Wykorzystaj sygnał złożony z Laboratorium 1 (suma sinusów z wylosowanymi amplitudami i fazami). Próbkuj go z wylosowaną częstotliwością `fs5` (przedział `[1.1·f_max, 3·f_max]`, `f_max = f2`) i kwantyzuj do `b5` bitów (oraz do innych wartości z 3–8 do porównania). Dla każdej pary (`fs`, `b`) z siatki wokół `fs5` i `b5` oblicz SNR i przepływność `fs·b` [bit/s]. Wyznacz **minimalną przepływność**, przy której SNR ≥ 30 dB, i sprawdź, czy któraś składowa uległa aliasingowi. Wynik przedstaw w tabeli i na wykresie, porównaj z przewidywaniem teoretycznym.
+
+*Zadanie 5★ jest dobrowolne i podnosi ocenę z 4.0 do 5.0 pod warunkiem poprawnego wykonania zadań 1–4.*
 
 ---
 
@@ -180,13 +225,14 @@ W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz
 
 **WYMAGANA STRUKTURA SPRAWOZDANIA:**
 1. **Strona tytułowa:** imię i nazwisko, temat laboratorium oraz data wykonania laboratorium.
-2. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione oraz jak te zmiany wpłynęły na wykresy lub wyniki.
-3. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
+2. **Parametry losowe:** wpisany numer `nr` oraz kod losowania wraz z wylosowanymi wartościami.
+3. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione (w tym wybrany eksperyment „Twoja kolej”) oraz jak te zmiany wpłynęły na wykresy lub wyniki.
+4. **Rozwiązanie każdego zadania** — dla Zadania 1–4 (oraz 5★, jeśli je wykonujesz) przygotuj osobny podrozdział zawierający:
    - koncepcję rozwiązania,
    - kod źródłowy,
    - wyniki (wykresy i/lub tabele),
    - wnioski dotyczące danego zadania.
-4. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
+5. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
 
 **UWAGI TECHNICZNE:**
 - Stosuj podział na rozdziały i podrozdziały wszędzie tam, gdzie poprawia on czytelność dokumentu.

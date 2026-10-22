@@ -61,6 +61,11 @@ title('Plan Z - bieguny i zera H(z)');
 - Zmień współczynniki wielomianów licznika i mianownika, aby sprawdzić, jak przesunięcie biegunu poza okrąg jednostkowy prowadzi do utraty stabilności.
 - To ćwiczenie buduje intuicję potrzebną przy projektowaniu filtrów IIR w kolejnych laboratoriach.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień bieguny na własne (także zespolone sprzężone) i sprawdź stabilność, zanim narysujesz plan Z – zapisz swoją prognozę.
+- Zbadaj, co się dzieje dla bieguna dokładnie na okręgu jednostkowym (`|p| = 1`).
+- Dodaj zero na okręgu jednostkowym i zobacz, jak wpływa na charakterystykę amplitudową.
+
 ## 5. PRZYKŁAD 2: Odpowiedź impulsowa i charakterystyka częstotliwościowa
 
 ```octave
@@ -97,6 +102,11 @@ ylabel('Faza [stopnie]'); title('Charakterystyka fazowa'); grid on;
 - Zmień współczynniki filtru lub długość odpowiedzi impulsowej, aby sprawdzić, jak szybko wygasa odpowiedź układu.
 - W sprawozdaniu dobrze jest powiązać obserwowane cechy wykresów z położeniem biegunów i zer.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień współczynnik `a` w mianowniku i zmierz, po ilu próbkach odpowiedź impulsowa spada poniżej 1% (czas „ustalania”).
+- Porównaj odpowiedź z `filter` i z wzorem analitycznym `h[n] = a^n`.
+- Sprawdź, jak znak współczynnika wpływa na to, czy filtr jest dolno-, czy górnoprzepustowy.
+
 ## 6. PRZYKŁAD 3: Wpływ położenia biegunów na odpowiedź układu
 
 ```octave
@@ -130,17 +140,55 @@ end
 - Zmień `theta`, aby przesuwać częstotliwość rezonansową, albo ustaw `r` bardzo blisko `1`, aby zobaczyć silne podbicie widma.
 - To przykład szczególnie ważny przed laboratoriów z filtrami IIR, gdzie dobór biegunów decyduje o własnościach filtru.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Dobierz promień `r` tak, by szerokość rezonansu była dwa razy węższa niż w przykładzie.
+- Zaprojektuj biegun odpowiadający dokładnie wybranej przez Ciebie częstotliwości `f_0` przy `fs = 1000 Hz` (`theta = 2π·f_0/fs`).
+- Oceń, co się stanie z odpowiedzią impulsową, gdy `r` rośnie do `0.999`.
+
 ## 7. ZADANIA
 
 W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz z wcześniejszych zajęć. Jeżeli dana technika była już pokazana wcześniej, odwołaj się do niej zamiast niepotrzebnie powielać cały kod od zera.
+
+### 7.1 Zasady oceny i swoboda pracy
+- Wszystkie zadania **1–4** odpowiadają ocenie **4.0**. Ocenę **5.0** można uzyskać dodatkowo za **Zadanie 5★**, które jest trudniejsze i wymaga połączenia bieżącego tematu z zagadnieniami z poprzednich ćwiczeń (wskazane w treści zadania).
+- Zadania **1–2** są takie same dla wszystkich (podstawy). Zadania **3–4** oraz Zadanie 5★ mają **parametry losowe**, więc każde sprawozdanie będzie inne – nie kopiuj wyników od innych osób.
+- W zadaniach „swobodnych” sam wybierasz sygnały, metody, rozmiary i kryteria; **musisz** jednak uzasadnić swoje decyzje liczbami i wykresami.
+
+### 7.2 Losowanie parametrów (wykonaj na początku skryptu)
+Wpisz ostatnie 4 cyfry swojego numeru albumu do zmiennej `nr` – dzięki `rand('state', nr)` ten sam numer zawsze daje te same parametry (powtarzalność), a różne numery dają różne sprawozdania. **Wartości wylosowanych parametrów wypisz w sprawozdaniu.**
+
+```octave
+nr = 1234;                  % <- ostatnie 4 cyfry numeru albumu
+rand('state', nr); randn('state', nr);
+
+a1 = 0.5 + 0.45 * rand();           % wspolczynnik filtra 1. rzedu (0.5..0.95)
+r  = 0.6 + 0.35 * rand();           % promien pary biegunow
+theta = pi * (0.1 + 0.8*rand());    % kat biegunow [rad]
+r2 = 0.4 + 0.5 * rand();            % promien drugiej pary
+theta2 = pi * (0.1 + 0.8*rand());
+z0 = exp(1j*pi*randi([1 7])/8);     % zero na okregu jednostkowym
+fs = randi([8 16]) * 100;           % czestotliwosc probkowania [Hz]
+fprintf('a1=%.3f r=%.3f theta=%.3f r2=%.3f theta2=%.3f fs=%d\n', a1, r, theta, r2, theta2, fs);
+% --- do zadania 5* ---
+f0_5 = (0.1 + 0.3*rand()) * fs;             % czestotliwosc rezonansu [Hz]
+r5 = 0.9 + 0.09*rand();                     % promien biegunow
+```
+
+### 7.3 Zadania na ocenę 4.0
 
 1. **Zadanie 1:** Zbadaj stabilność systemu z biegunami `p₁ = 0.8`, `p₂ = -0.6`. Narysuj plan Z. Teraz zmień `p₁ = 1.2` – co się dzieje z odpowiedzią impulsową?
 
 2. **Zadanie 2:** Oblicz odpowiedź impulsową filtra o funkcji przenoszenia `H(z) = 1 / (1 - 0.7z⁻¹)`. Czy jest skończona czy nieskończona?
 
-3. **Zadanie 3:** Porównaj charakterystyki częstotliwościowe filtrów: `b=[1,1]/2, a=1` oraz `b=1, a=[1,-0.9]`. Który jest dolnoprzepustowy?
+3. **Zadanie 3 (losowe):** Porównaj charakterystyki filtrów `b = [1 1]/2, a = 1` oraz `b = 1, a = [1 -a1]` z wylosowanym `a1`. Zbadaj biegun, stabilność i `h[n]`; oblicz czas, po którym odpowiedź impulsowa spada poniżej 1% i zweryfikuj go wzorem `n = ln(0.01)/ln(a1)`. Który filtr jest dolnoprzepustowy?
 
-4. **Zadanie 4:** Zaproponuj własny układ opisany transmitancją `H(z)` z co najmniej jednym zerem i dwiema parami biegunów. Oceń jego stabilność, narysuj wykres biegunów i zer oraz skomentuj wpływ położenia biegunów na kształt charakterystyki amplitudowej.
+4. **Zadanie 4 (losowe, swoboda):** Zbuduj układ z zerem `z0` (i jego sprzężeniem) oraz dwiema parami biegunów (`r, theta` i `r2, theta2`). Wyznacz współczynniki `b`, `a` funkcją `poly`, narysuj plan Z (`zplane`) i charakterystykę amplitudową dla `fs`, odczytaj częstotliwości rezonansów w Hz i porównaj z `theta·fs/(2π)`. Następnie **samodzielnie** zmodyfikuj jeden promień tak, by układ był na granicy stabilności, i opisz skutek.
+
+### 7.4 Zadanie na ocenę 5.0
+
+5. **Zadanie 5★ (na 5.0):** Zaprojektuj rezonator IIR drugiego rzędu dla częstotliwości `f_0` = `f0_5` i promienia `r5`. Sprawdź jego stabilność (Laboratorium 7), wyznacz splot sygnału testowego (suma dwóch sinusów z Laboratorium 1, jedna na `f_0`) z odpowiedzią impulsową obciętą do 99% energii (Laboratorium 6) i porównaj z `filter`. Widmo wejścia i wyjścia pokaż FFT z oknem (Laboratorium 5) i oblicz wzmocnienie na `f_0` oraz szerokość pasma −3 dB; porównaj ją z oszacowaniem `≈ (1−r)·fs/π`. Zweryfikuj, że przy `fs` przekraczającym wartość graniczną wystąpiłby aliasing wejścia (Laboratorium 2).
+
+*Zadanie 5★ jest dobrowolne i podnosi ocenę z 4.0 do 5.0 pod warunkiem poprawnego wykonania zadań 1–4.*
 
 ---
 
@@ -150,13 +198,14 @@ W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz
 
 **WYMAGANA STRUKTURA SPRAWOZDANIA:**
 1. **Strona tytułowa:** imię i nazwisko, temat laboratorium oraz data wykonania laboratorium.
-2. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione oraz jak te zmiany wpłynęły na wykresy lub wyniki.
-3. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
+2. **Parametry losowe:** wpisany numer `nr` oraz kod losowania wraz z wylosowanymi wartościami.
+3. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione (w tym wybrany eksperyment „Twoja kolej”) oraz jak te zmiany wpłynęły na wykresy lub wyniki.
+4. **Rozwiązanie każdego zadania** — dla Zadania 1–4 (oraz 5★, jeśli je wykonujesz) przygotuj osobny podrozdział zawierający:
    - koncepcję rozwiązania,
    - kod źródłowy,
    - wyniki (wykresy i/lub tabele),
    - wnioski dotyczące danego zadania.
-4. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
+5. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
 
 **UWAGI TECHNICZNE:**
 - Stosuj podział na rozdziały i podrozdziały wszędzie tam, gdzie poprawia on czytelność dokumentu.

@@ -67,6 +67,11 @@ fprintf('SNR filtr medianowy:  %.2f dB\n', ...
 - Zmień liczbę i amplitudę impulsów zakłócających, aby sprawdzić, kiedy filtr medianowy daje przewagę nad filtrem liniowym.
 - To klasyczny przykład pokazujący, że wybór filtru musi być dopasowany do rodzaju zakłócenia, a nie wyłącznie do oczekiwanego stopnia wygładzenia.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień gęstość zakłóceń impulsowych i sprawdź, kiedy filtr medianowy przestaje być skuteczny.
+- Zaproponuj własną miarę jakości (np. maksymalny błąd lokalny) i porównaj ją z SNR/MSE.
+- Zastosuj filtr uśredniający i medianowy kaskadowo – czy kolejność ma znaczenie?
+
 ## 5. PRZYKŁAD 2: Filtracja 2D obrazu
 
 ```octave
@@ -105,6 +110,11 @@ subplot(2,3,6); imagesc(img_fm);   title('Filtr medianowy 2D'); colormap gray; a
 - Dzięki temu można ocenić, które rozwiązanie lepiej usuwa zakłócenia impulsowe i jak silnie degradowane są krawędzie obrazu.
 - Zmień rozmiar maski lub poziom zakłóceń, aby porównać kompromis między usuwaniem szumu a utratą detali.
 - W sprawozdaniu warto odwołać się do konkretnych fragmentów obrazu, gdzie różnice między metodami są najlepiej widoczne.
+
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień obraz testowy na własny (np. wygenerowany z kształtów) i oceń zachowanie krawędzi po filtracji.
+- Zbadaj wpływ rozmiaru maski (3×3, 5×5, 9×9) na rozmycie i szum.
+- Dodaj do obrazu szum impulsowy zamiast gaussowskiego i porównaj skuteczność filtrów.
 
 ## 6. PRZYKŁAD 3: Wpływ długości filtru medianowego na sygnał 1D
 
@@ -145,17 +155,51 @@ title('Filtr medianowy, okno = 9'); xlabel('n'); ylabel('Amp'); grid on;
 - Zmień długości okna lub położenie impulsów, aby sprawdzić, jak filtr reaguje na skupione i rozproszone zakłócenia.
 - To przykład prowadzący „krok dalej” od przykładu 1: pokazuje, że sama zmiana parametru filtru istotnie wpływa na końcowy wynik.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Znajdź długość okna medianowego, która minimalizuje MSE dla Twojego sygnału, i narysuj wykres MSE vs długość okna.
+- Sprawdź, jak mediana zachowuje strome zbocza w porównaniu z filtrem uśredniającym tej samej długości.
+- Zaproponuj własny sygnał z ostrymi krawędziami i uzasadnij najlepszy wariant filtracji.
+
 ## 7. ZADANIA
 
 W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz z wcześniejszych zajęć. Jeżeli dana technika była już pokazana wcześniej, odwołaj się do niej zamiast niepotrzebnie powielać cały kod od zera.
+
+### 7.1 Zasady oceny i swoboda pracy
+- Wszystkie zadania **1–4** odpowiadają ocenie **4.0**. Ocenę **5.0** można uzyskać dodatkowo za **Zadanie 5★**, które jest trudniejsze i wymaga połączenia bieżącego tematu z zagadnieniami z poprzednich ćwiczeń (wskazane w treści zadania).
+- Zadania **1–2** są takie same dla wszystkich (podstawy). Zadania **3–4** oraz Zadanie 5★ mają **parametry losowe**, więc każde sprawozdanie będzie inne – nie kopiuj wyników od innych osób.
+- W zadaniach „swobodnych” sam wybierasz sygnały, metody, rozmiary i kryteria; **musisz** jednak uzasadnić swoje decyzje liczbami i wykresami.
+
+### 7.2 Losowanie parametrów (wykonaj na początku skryptu)
+Wpisz ostatnie 4 cyfry swojego numeru albumu do zmiennej `nr` – dzięki `rand('state', nr)` ten sam numer zawsze daje te same parametry (powtarzalność), a różne numery dają różne sprawozdania. **Wartości wylosowanych parametrów wypisz w sprawozdaniu.**
+
+```octave
+nr = 1234;                  % <- ostatnie 4 cyfry numeru albumu
+rand('state', nr); randn('state', nr);
+
+fs = 1000; t = 0:1/fs:1-1/fs;
+f   = randi([3 12]);                        % czestotliwosc sygnalu uzytecznego [Hz]
+sigma = randi([2 8]) / 10;                  % odchylenie szumu gaussowskiego
+p   = randi([3 12]) / 100;                  % gestosc szumu impulsowego
+win = sort(randperm(6, 3)) * 2 + 1;         % trzy nieparzyste dlugosci okna (3..13)
+n_shapes = randi([3 6]);                    % liczba losowych ksztaltow w obrazie
+fprintf('f=%d sigma=%.1f p=%.2f okna=%s ksztalty=%d\n', f, sigma, p, mat2str(win), n_shapes);
+```
+
+### 7.3 Zadania na ocenę 4.0
 
 1. **Zadanie 1:** Zbadaj, jak rozmiar okna filtru medianowego (3, 7, 11) wpływa na usuwanie szumu impulsowego z sygnału 1D. Oblicz SNR przed i po filtracji.
 
 2. **Zadanie 2:** Zastosuj filtr Laplasjanu do obrazu (ostrzenie). Utwórz obraz wyostrzonego koła: `img_sharp = img + lambda * imfilter(img, h_lap)` gdzie `h_lap = [0 -1 0; -1 4 -1; 0 -1 0]`.
 
-3. **Zadanie 3:** Porównaj filtr uśredniający i Gaussowski do usuwania szumu Gaussowskiego z sygnału 1D. Który daje lepsze wyniki (niższy błąd MSE)?
+3. **Zadanie 3 (losowe):** Dodaj do sinusa `f` szum Gaussowski o `sigma` i porównaj filtr uśredniający oraz Gaussowski dobierając szerokość okna z `win`. Oblicz MSE i SNR dla każdego wariantu, wskaż najlepszy i wytłumacz, dlaczego mediana nie jest tu naturalnym wyborem.
 
-4. **Zadanie 4:** Porównaj działanie filtru medianowego dla co najmniej trzech różnych długości okna i wskaż wariant najlepszy dla wybranego sygnału z zakłóceniami impulsowymi. Uzasadnij wybór na podstawie wykresów i krótkiej analizy jakości.
+4. **Zadanie 4 (losowe, swoboda):** Dodaj do sygnału (**własnego lub sinusa `f`**) szum impulsowy o gęstości `p` i oceń filtr medianowy dla okien z `win` oraz co najmniej jeden filtr liniowy. Zbuduj tabelę MSE/SNR, wskaż wariant najlepszy i uzasadnij go także oceną wizualną wykresów (zachowanie krawędzi).
+
+### 7.4 Zadanie na ocenę 5.0
+
+5. **Zadanie 5★ (na 5.0):** Wygeneruj obraz o rozmiarze 128×128 z `n_shapes` losowo rozmieszczonymi kształtami (prostokąty/koła o losowej jasności) i zakłóć go jednocześnie szumem gaussowskim (`sigma`) i impulsowym (`p`). Zaprojektuj dwuetapowy tor: najpierw filtr medianowy (usuwa impulsy), potem filtr liniowy – uśredniający lub Gaussowski, zrealizowany splotem 2D (Laboratorium 6), a ostry wynik zweryfikuj profilem jednej linii (porównanie z oryginałem przez FFT 1D, Laboratorium 5). Dla każdego wariantu kolejności filtrów oblicz PSNR i krawędziowy błąd; porównaj z filtrem FIR 1D zaprojektowanym w Laboratorium 9 zastosowanym wzdłuż wierszy.
+
+*Zadanie 5★ jest dobrowolne i podnosi ocenę z 4.0 do 5.0 pod warunkiem poprawnego wykonania zadań 1–4.*
 
 ---
 
@@ -165,13 +209,14 @@ W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz
 
 **WYMAGANA STRUKTURA SPRAWOZDANIA:**
 1. **Strona tytułowa:** imię i nazwisko, temat laboratorium oraz data wykonania laboratorium.
-2. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione oraz jak te zmiany wpłynęły na wykresy lub wyniki.
-3. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
+2. **Parametry losowe:** wpisany numer `nr` oraz kod losowania wraz z wylosowanymi wartościami.
+3. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione (w tym wybrany eksperyment „Twoja kolej”) oraz jak te zmiany wpłynęły na wykresy lub wyniki.
+4. **Rozwiązanie każdego zadania** — dla Zadania 1–4 (oraz 5★, jeśli je wykonujesz) przygotuj osobny podrozdział zawierający:
    - koncepcję rozwiązania,
    - kod źródłowy,
    - wyniki (wykresy i/lub tabele),
    - wnioski dotyczące danego zadania.
-4. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
+5. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
 
 **UWAGI TECHNICZNE:**
 - Stosuj podział na rozdziały i podrozdziały wszędzie tam, gdzie poprawia on czytelność dokumentu.

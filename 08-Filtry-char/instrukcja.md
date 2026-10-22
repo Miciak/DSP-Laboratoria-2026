@@ -63,6 +63,11 @@ title('Charakterystyka fazowa'); grid on;
 - Zmień rząd filtrów, aby porównać, jak rośnie selektywność i koszt obliczeniowy obu rozwiązań.
 - To ćwiczenie pokazuje, że podobna odpowiedź amplitudowa nie oznacza identycznego zachowania filtru w dziedzinie czasu.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień częstotliwość odcięcia i rząd filtra na własne wartości i zmierz szerokość pasma przejściowego (od −3 dB do −40 dB).
+- Dorzuć filtr eliptyczny (`ellip`) i porównaj jego strome zbocze z Butterworthem kosztem zafalowań.
+- Sprawdź, jak zmienia się charakterystyka fazowa przy zmianie rzędu filtra IIR.
+
 ## 5. PRZYKŁAD 2: Opóźnienie grupowe
 
 ```octave
@@ -91,6 +96,11 @@ title('Opoznienie grupowe FIR vs IIR'); grid on;
 - Filtr FIR o liniowej fazie daje niemal stałe opóźnienie grupowe, podczas gdy filtr IIR wprowadza wyraźnie częstotliwościowo zależne przesunięcia.
 - Zmień rząd filtru FIR lub IIR i sprawdź, jak wpływa to na płaskość opóźnienia oraz zniekształcenie przebiegów złożonych.
 - Ta obserwacja jest ważna przy przetwarzaniu sygnałów, w których istotny jest kształt impulsów lub relacje fazowe między składowymi.
+
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmierz opóźnienie grupowe w paśmie przepustowym i sprawdź, czy jest zgodne z `(N−1)/2` dla FIR.
+- Zbadaj opóźnienie grupowe filtra IIR – dla jakich częstotliwości jest największe? Dlaczego?
+- Wypróbuj `filtfilt` i oceń, co dzieje się z opóźnieniem.
 
 ## 6. PRZYKŁAD 3: Wpływ doboru okna na charakterystykę filtru FIR
 
@@ -126,17 +136,51 @@ legend('Hamming', 'Blackman', 'Kaiser'); grid on;
 - Zmień rząd `N` albo parametr okna Kaisera, aby sprawdzić, jak poprawia się tłumienie kosztem wydłużenia odpowiedzi impulsowej.
 - Przykład dobrze przygotowuje do laboratorium projektowego, w którym dobór metody projektowania staje się świadomą decyzją inżynierską.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Dodaj do porównania okno Blackmana lub Kaisera (`kaiser(N, beta)`) i sprawdź, jak `beta` zmienia kompromis między szerokością a tłumieniem.
+- Zmień rząd filtra przy ustalonym oknie i zmierz zmianę tłumienia w paśmie zaporowym.
+- Zaproponuj własną regułę doboru okna (jakie tłumienie, jaka szerokość) dla wybranego zadania.
+
 ## 7. ZADANIA
 
 W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz z wcześniejszych zajęć. Jeżeli dana technika była już pokazana wcześniej, odwołaj się do niej zamiast niepotrzebnie powielać cały kod od zera.
+
+### 7.1 Zasady oceny i swoboda pracy
+- Wszystkie zadania **1–4** odpowiadają ocenie **4.0**. Ocenę **5.0** można uzyskać dodatkowo za **Zadanie 5★**, które jest trudniejsze i wymaga połączenia bieżącego tematu z zagadnieniami z poprzednich ćwiczeń (wskazane w treści zadania).
+- Zadania **1–2** są takie same dla wszystkich (podstawy). Zadania **3–4** oraz Zadanie 5★ mają **parametry losowe**, więc każde sprawozdanie będzie inne – nie kopiuj wyników od innych osób.
+- W zadaniach „swobodnych” sam wybierasz sygnały, metody, rozmiary i kryteria; **musisz** jednak uzasadnić swoje decyzje liczbami i wykresami.
+
+### 7.2 Losowanie parametrów (wykonaj na początku skryptu)
+Wpisz ostatnie 4 cyfry swojego numeru albumu do zmiennej `nr` – dzięki `rand('state', nr)` ten sam numer zawsze daje te same parametry (powtarzalność), a różne numery dają różne sprawozdania. **Wartości wylosowanych parametrów wypisz w sprawozdaniu.**
+
+```octave
+nr = 1234;                  % <- ostatnie 4 cyfry numeru albumu
+rand('state', nr); randn('state', nr);
+
+fs = 1000;
+fc = randi([8 30]) * 10;                      % czestotliwosc odciecia [Hz]
+ord = 2 * randi([10 40]);                     % rzad FIR (parzysty)
+ordIIR = randi([3 8]);                        % rzad IIR
+okna = {'rectwin', 'hann', 'hamming', 'blackman'};
+idx = randperm(4, 2);                         % dwa losowe okna
+fprintf('fc=%d ord=%d ordIIR=%d okna: %s, %s\n', fc, ord, ordIIR, okna{idx(1)}, okna{idx(2)});
+```
+
+### 7.3 Zadania na ocenę 4.0
 
 1. **Zadanie 1:** Zaprojektuj filtr FIR dolnoprzepustowy (rzędu 20, 40, 80) z częstotliwością odcięcia 200 Hz i fs = 1000 Hz. Porównaj strome zbocze charakterystyk.
 
 2. **Zadanie 2:** Porównaj filtry IIR: Butterworth, Chebyshev I i Chebyshev II rzędu 4 i tej samej częstotliwości odcięcia. Użyj `cheby1()` i `cheby2()`.
 
-3. **Zadanie 3:** Zbadaj opóźnienie grupowe filtra FIR z oknem prostokątnym i oknem Blackmana. Jak okno wpływa na liniowość fazy?
+3. **Zadanie 3 (losowe):** Zaprojektuj filtr IIR dolnoprzepustowy Butterworth rzędu `ordIIR` i FIR rzędu `ord` (okno Hamminga), oba z `fc`. Porównaj charakterystykę amplitudową i opóźnienie grupowe. Wyznacz tłumienie w odległości `fs/10` od `fc` i skomentuj, kiedy liniowa faza FIR uzasadnia jego większy rząd.
 
-4. **Zadanie 4:** Dla tej samej częstotliwości odcięcia zaprojektuj filtry FIR z dwoma różnymi oknami i porównaj ich szerokość pasma przejściowego oraz tłumienie w paśmie zaporowym. Sformułuj kryterium wyboru okna dla wybranego zastosowania.
+4. **Zadanie 4 (losowe, swoboda):** Dla `fc` zaprojektuj filtry FIR z dwoma wylosowanymi oknami (`okna{idx}`) przy rzędzie `ord`. Zmierz szerokość pasma przejściowego i tłumienie w paśmie zaporowym. Następnie wybierz **własne zastosowanie** (np. audio, ECG, pomiar) i sformułuj uzasadnione kryterium doboru okna.
+
+### 7.4 Zadanie na ocenę 5.0
+
+5. **Zadanie 5★ (na 5.0):** Zaprojektuj filtr dolnoprzepustowy FIR i IIR o tej samej częstotliwości odcięcia `fc` oraz tłumieniu ≥ 40 dB w odległości `0.2·fc`. Dla obu wyznacz najmniejszy rząd (wskazówka: `buttord`, `kaiserord`). Pokaż bieguny i zera obu (Laboratorium 7), przefiltruj sygnał złożony z dwóch sinusów (Laboratorium 1: jedna poniżej, jedna powyżej `fc`) metodą splotu (Laboratorium 6) i `filter`, a widma przed i po (FFT, Laboratorium 5) zestaw na jednym wykresie. Zmierz faktyczne tłumienie składowej zaporowej i porównaj koszty: rząd, opóźnienie, liczba mnożeń na próbkę.
+
+*Zadanie 5★ jest dobrowolne i podnosi ocenę z 4.0 do 5.0 pod warunkiem poprawnego wykonania zadań 1–4.*
 
 ---
 
@@ -146,13 +190,14 @@ W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz
 
 **WYMAGANA STRUKTURA SPRAWOZDANIA:**
 1. **Strona tytułowa:** imię i nazwisko, temat laboratorium oraz data wykonania laboratorium.
-2. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione oraz jak te zmiany wpłynęły na wykresy lub wyniki.
-3. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
+2. **Parametry losowe:** wpisany numer `nr` oraz kod losowania wraz z wylosowanymi wartościami.
+3. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione (w tym wybrany eksperyment „Twoja kolej”) oraz jak te zmiany wpłynęły na wykresy lub wyniki.
+4. **Rozwiązanie każdego zadania** — dla Zadania 1–4 (oraz 5★, jeśli je wykonujesz) przygotuj osobny podrozdział zawierający:
    - koncepcję rozwiązania,
    - kod źródłowy,
    - wyniki (wykresy i/lub tabele),
    - wnioski dotyczące danego zadania.
-4. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
+5. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
 
 **UWAGI TECHNICZNE:**
 - Stosuj podział na rozdziały i podrozdziały wszędzie tam, gdzie poprawia on czytelność dokumentu.

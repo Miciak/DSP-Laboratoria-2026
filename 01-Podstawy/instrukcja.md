@@ -57,6 +57,11 @@ grid on;
 - Zmień `f` z `5 Hz` na `10 Hz`, aby zobaczyć gęstsze oscylacje, oraz `A` z `1` na `2`, aby porównać wpływ amplitudy na wysokość przebiegu.
 - Zwiększenie `fs` nie zmienia samego sygnału, ale poprawia gęstość próbkowania i czytelność reprezentacji dyskretnej.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień `f` i `A` na własne wartości i dopisz trzeci wykres z sygnałem o przesunięciu fazowym `pi/3` – opisz, co zmienia faza, a czego nie zmienia.
+- Wyświetl ten sam sygnał z różnymi liczbami próbek (np. `fs = 20`, `100`, `1000`) i oceń, od jakiej gęstości wykres przestaje być „łamany”.
+- Dodaj `fprintf` z liczbą okresów widocznych na wykresie i sprawdź ją na rysunku.
+
 ## 5. PRZYKŁAD 2: Porównanie sygnałów podstawowych
 
 ```octave
@@ -92,6 +97,11 @@ plot(t, x_saw); title('Piloksztaltny'); xlabel('t [s]'); grid on;
 - Sinus i cosinus różnią się fazą, natomiast sygnały prostokątny i piłokształtny mają nieciągłości, które później okażą się istotne w analizie widmowej.
 - Zmień `f` na `5 Hz` albo wydłuż `T`, aby ocenić, jak rośnie liczba okresów i jak zmienia się czytelność porównania.
 - Jeżeli wprowadzisz wspólną amplitudę `A` i przemnożysz przez nią wszystkie przebiegi, łatwo porównasz jednocześnie wpływ kształtu i skali sygnału.
+
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Wymyśl własną parę przebiegów (np. sinus i prostokąt o innych częstotliwościach) i porównaj je na wspólnym wykresie z legendą.
+- Sprawdź, co się stanie, gdy do sygnału dodasz stałą składową (offset) – jak zmieni się wykres, a jak jego kształt?
+- Zaproponuj własne kryterium: który z przebiegów jest „najbardziej gładki” i uzasadnij je liczbowo (np. maksymalna różnica sąsiednich próbek).
 
 ## 6. PRZYKŁAD 3: Suma dwóch sinusoid o różnych parametrach
 
@@ -130,17 +140,44 @@ title('Suma dwoch sinusoid'); xlabel('Czas [s]'); ylabel('Amp'); grid on;
 - Zmień `f1` i `f2` na wartości bliższe sobie, aby obserwować wolniejsze obwiednie, albo ustaw `phi2 = 0`, aby porównać wpływ przesunięcia fazowego.
 - Dodanie kolejnego składnika sinusoidalnego jest prostym krokiem do budowy sygnałów testowych wykorzystywanych w kolejnych laboratoriach.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień stosunek amplitud składowych (np. 1:1, 1:0.2, 1:0.05) i zaobserwuj, kiedy słabsza składowa przestaje być widoczna.
+- Dobierz częstotliwości tak, by składowe tworzyły dudnienia (różnica 1–2 Hz) i zmierz okres obwiedni z wykresu.
+- Dodaj trzecią składową i opisz własnymi słowami, którą cechę wykresu zmienia każda z trzech.
+
 ## 7. ZADANIA
 
 W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz z wcześniejszych zajęć. Jeżeli dana technika była już pokazana wcześniej, odwołaj się do niej zamiast niepotrzebnie powielać cały kod od zera.
+
+### 7.1 Zasady oceny i swoboda pracy
+- Za poprawne wykonanie wszystkich zadań **1–4** proponowana jest ocena **4.0**. W tym laboratorium nie ma jeszcze Zadania 5★ – ocenę 5.0 będzie można zdobywać od Laboratorium 2, gdzie zadanie dodatkowe łączy nowy temat z wcześniejszymi.
+- Zadania **1–2** są takie same dla wszystkich (podstawy). Zadania **3–4** mają **parametry losowe**, więc każde sprawozdanie będzie inne – nie kopiuj wyników od innych osób.
+- W zadaniach „swobodnych” sam wybierasz sygnały, metody, rozmiary i kryteria; **musisz** jednak uzasadnić swoje decyzje liczbami i wykresami.
+
+### 7.2 Losowanie parametrów (wykonaj na początku skryptu)
+Wpisz ostatnie 4 cyfry swojego numeru albumu do zmiennej `nr` – dzięki `rand('state', nr)` ten sam numer zawsze daje te same parametry (powtarzalność), a różne numery dają różne sprawozdania. **Wartości wylosowanych parametrów wypisz w sprawozdaniu.**
+
+```octave
+nr = 1234;                  % <- wpisz ostatnie 4 cyfry swojego numeru albumu
+rand('state', nr); randn('state', nr);
+
+A1 = randi([2 5]);          % amplituda skladowej 1
+A2 = randi([1 3]) / 2;      % amplituda skladowej 2 (0.5, 1, 1.5)
+f1 = randi([3 9]);          % czestotliwosc 1 [Hz]
+f2 = f1 + randi([2 6]);     % czestotliwosc 2 [Hz]
+phi = randi([0 7]) * pi/4;  % przesuniecie fazowe skladowej 2
+fprintf('A1=%g A2=%g f1=%d f2=%d phi=%.2f rad\n', A1, A2, f1, f2, phi);
+```
+
+### 7.3 Zadania na ocenę 4.0
 
 1. **Zadanie 1:** Wygeneruj sygnał sinusoidalny o amplitudzie `A = 2`, częstotliwości `f = 10 Hz` i czasie trwania `T = 2 s`. Narysuj wykres i opisz osie.
 
 2. **Zadanie 2:** Zmodyfikuj Przykład 2 tak, aby wszystkie sygnały miały częstotliwość `f = 5 Hz` i amplitudę `A = 1.5`. Porównaj wykresy.
 
-3. **Zadanie 3:** Utwórz sygnał będący sumą dwóch sinusów: `x(t) = sin(2π·3t) + 0.5·sin(2π·7t)`. Narysuj wykres i opisz, co obserwujesz.
+3. **Zadanie 3 (losowe):** Wygeneruj sygnał `x(t) = A1·sin(2π·f1·t) + A2·sin(2π·f2·t + φ)` z wylosowanymi parametrami (`T = 2 s`). Narysuj go razem z obiema składowymi (legenda!) i opisz, jak wylosowana faza `φ` oraz stosunek `A2/A1` zmieniają kształt sumy.
 
-4. **Zadanie 4:** Zaprojektuj własny sygnał będący sumą co najmniej trzech składowych sinusoidalnych o różnych amplitudach i fazach. Wskaż, z którego przykładu korzystasz, i opisz wpływ każdej składowej na kształt sygnału wynikowego.
+4. **Zadanie 4 (losowe, swoboda):** Zaprojektuj sygnał będący sumą co najmniej trzech składowych sinusoidalnych. Częstotliwości losuj poleceniem `f = sort(randperm(20, 3))`, amplitudy i fazy dobierz samodzielnie (ale tak, by każda składowa była widoczna). Wskaż, z którego przykładu korzystasz, i opisz wpływ każdej składowej na wynik.
 
 ---
 
@@ -150,13 +187,14 @@ W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz
 
 **WYMAGANA STRUKTURA SPRAWOZDANIA:**
 1. **Strona tytułowa:** imię i nazwisko, temat laboratorium oraz data wykonania laboratorium.
-2. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione oraz jak te zmiany wpłynęły na wykresy lub wyniki.
-3. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
+2. **Parametry losowe:** wpisany numer `nr` oraz kod losowania wraz z wylosowanymi wartościami.
+3. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione (w tym wybrany eksperyment „Twoja kolej”) oraz jak te zmiany wpłynęły na wykresy lub wyniki.
+4. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
    - koncepcję rozwiązania,
    - kod źródłowy,
    - wyniki (wykresy i/lub tabele),
    - wnioski dotyczące danego zadania.
-4. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
+5. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
 
 **UWAGI TECHNICZNE:**
 - Stosuj podział na rozdziały i podrozdziały wszędzie tam, gdzie poprawia on czytelność dokumentu.

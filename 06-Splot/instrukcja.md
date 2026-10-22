@@ -59,6 +59,11 @@ plot(t_y, y); title('Po filtracji (splot z filtrem MA)'); xlabel('t [s]'); grid 
 - Zmień długość okna filtru albo poziom zakłóceń, aby zobaczyć kompromis między wygładzaniem a zniekształceniem sygnału użytecznego.
 - To bezpośrednie zastosowanie definicji układu LTI: sygnał wyjściowy powstaje przez splot wejścia z odpowiedzią impulsową.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Zmień odpowiedź impulsową `h` na własną (np. różniczkującą `[1 -1]`) i opisz, co robi z sygnałem.
+- Zmień długość filtra uśredniającego i zmierz opóźnienie wyjścia względem wejścia.
+- Sprawdź długość wyniku splotu (`N + M - 1`) dla kilku wymyślonych par długości.
+
 ## 5. PRZYKŁAD 2: Splot liniowy vs. kołowy oraz twierdzenie o splocie
 
 ```octave
@@ -93,6 +98,11 @@ stem(n_lin, y_circ, 'r'); title('Splot kolowy (FFT)'); xlabel('n'); grid on;
 - Jest to kluczowe rozróżnienie praktyczne, ponieważ niepoprawne użycie FFT może prowadzić do efektu zawijania sygnału.
 - Zmień długości analizowanych sygnałów lub usuń dopełnienie zerami, aby zaobserwować, kiedy wynik przestaje odpowiadać splotowi liniowemu.
 - W sprawozdaniu warto podkreślić, że mnożenie widm nie daje automatycznie poprawnego splotu liniowego bez kontroli długości sekwencji.
+
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Dobierz długość zero-paddingu tak, aby splot kołowy był identyczny z liniowym – ile minimum próbek potrzeba?
+- Zmierz czas obliczeń splotu `conv` i metody przez FFT dla coraz dłuższych sygnałów (`tic`/`toc`).
+- Sprawdź efekt „owinięcia” (aliasing czasowy) przy zbyt krótkim FFT.
 
 ## 6. PRZYKŁAD 3: Ręczna realizacja splotu liniowego
 
@@ -133,17 +143,52 @@ fprintf('Maksymalna roznica miedzy wynikami: %.6f\n', max(abs(y_builtin - y_manu
 - Zmień wektory `x` i `h`, aby sprawdzić, jak rośnie długość wyniku i które próbki w największym stopniu wpływają na kolejne wartości `y[n]`.
 - Jeżeli maksymalna różnica jest równa zero, oznacza to zgodność implementacji ręcznej z definicją matematyczną.
 
+**🎲 Twoja kolej – swobodny eksperyment** (wybierz co najmniej jeden punkt, opisz w sprawozdaniu swój wybór i wynik):
+- Napisz własną implementację splotu inaczej niż w przykładzie (np. metodą „odwrócenia i przesuwania”) i porównaj wyniki.
+- Przetestuj funkcję na sygnałach losowych i zmierz maksymalny błąd względem `conv`.
+- Zaproponuj własną odpowiedź impulsową z echem i posłuchaj/przeanalizuj jej wpływ na sygnał.
+
 ## 7. ZADANIA
 
 W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz z wcześniejszych zajęć. Jeżeli dana technika była już pokazana wcześniej, odwołaj się do niej zamiast niepotrzebnie powielać cały kod od zera.
+
+### 7.1 Zasady oceny i swoboda pracy
+- Wszystkie zadania **1–4** odpowiadają ocenie **4.0**. Ocenę **5.0** można uzyskać dodatkowo za **Zadanie 5★**, które jest trudniejsze i wymaga połączenia bieżącego tematu z zagadnieniami z poprzednich ćwiczeń (wskazane w treści zadania).
+- Zadania **1–2** są takie same dla wszystkich (podstawy). Zadania **3–4** oraz Zadanie 5★ mają **parametry losowe**, więc każde sprawozdanie będzie inne – nie kopiuj wyników od innych osób.
+- W zadaniach „swobodnych” sam wybierasz sygnały, metody, rozmiary i kryteria; **musisz** jednak uzasadnić swoje decyzje liczbami i wykresami.
+
+### 7.2 Losowanie parametrów (wykonaj na początku skryptu)
+Wpisz ostatnie 4 cyfry swojego numeru albumu do zmiennej `nr` – dzięki `rand('state', nr)` ten sam numer zawsze daje te same parametry (powtarzalność), a różne numery dają różne sprawozdania. **Wartości wylosowanych parametrów wypisz w sprawozdaniu.**
+
+```octave
+nr = 1234;                  % <- ostatnie 4 cyfry numeru albumu
+rand('state', nr); randn('state', nr);
+
+N  = randi([8 14]);                 % dlugosc sygnalu x
+M  = randi([3 6]);                  % dlugosc odpowiedzi h
+x  = randi([-5 5], 1, N);           % losowy sygnal calkowitoliczbowy
+h1 = randi([-3 3], 1, M);           % pierwsza odpowiedz impulsowa
+h2 = ones(1, randi([4 9])) / 6;     % druga - filtr usredniajacy o losowej dlugosci
+fn = randi([5 15]);                 % czestotliwosc sinusa do zadan z szumem [Hz]
+sigma = randi([2 6]) / 10;          % odchylenie standardowe szumu
+disp(x); disp(h1);
+```
+
+### 7.3 Zadania na ocenę 4.0
 
 1. **Zadanie 1:** Wykonaj splot sygnału `x = [1 2 3 2 1]` z odpowiedzią impulsową `h = [1 0 -1]`. Oblicz wynik ręcznie i zweryfikuj w Octave.
 
 2. **Zadanie 2:** Zaszum sygnał sinusoidalny i zastosuj filtr uśredniający o różnych długościach (M = 5, 15, 30). Porównaj wyniki filtracji.
 
-3. **Zadanie 3:** Zaimplementuj splot liniowy bez funkcji `conv()` – korzystając z pętli i definicji splotu. Porównaj z wynikiem funkcji `conv()`.
+3. **Zadanie 3 (losowe):** Zaimplementuj splot liniowy **bez** `conv()` (pętle) dla wylosowanych `x` i `h1`. Porównaj z `conv()` (maksymalny błąd musi być równy 0), narysuj wynik funkcją `stem` i oblicz ręcznie trzy wybrane próbki wyjścia.
 
-4. **Zadanie 4:** Zrealizuj splot tego samego sygnału z dwoma różnymi odpowiedziami impulsowymi i porównaj rezultaty. Wyjaśnij, jak zmiana odpowiedzi impulsowej wpływa na wygładzanie, opóźnienie lub wzmocnienie sygnału.
+4. **Zadanie 4 (losowe, swoboda):** Zaszum sinus `fn` (szum o `sigma`) i przefiltruj go odpowiedziami `h2` oraz **własną** odpowiedzią impulsową (np. różniczkującą, wygładzającą z wagami, z echem). Porównaj wygładzanie, opóźnienie i wzmocnienie wyniku (MSE względem sygnału czystego) i zaproponuj, która odpowiedź jest najlepsza dla tego sygnału.
+
+### 7.4 Zadanie na ocenę 5.0
+
+5. **Zadanie 5★ (na 5.0):** Zrealizuj *szybki splot* sygnału o długości `L ≥ 5000` z odpowiedzią `h2` metodą FFT (Laboratorium 5): dobierz minimalną długość FFT do uzyskania splotu liniowego i udowodnij zgodność z `conv()`. Następnie porównaj odpowiedź częstotliwościową filtra `h2` obliczoną z `fft(h2, Nfft)` z wartościami teoretycznymi, sprawdź w widmie, które składowe zaszumionego sinusa (Laboratorium 1–2) zostały stłumione, i zmierz czasy `conv` i metody FFT dla trzech długości sygnału. Wyniki przedstaw w tabeli i krótko wyjaśnij, od jakiej długości FFT jest szybsza.
+
+*Zadanie 5★ jest dobrowolne i podnosi ocenę z 4.0 do 5.0 pod warunkiem poprawnego wykonania zadań 1–4.*
 
 ---
 
@@ -153,13 +198,14 @@ W zadaniach można korzystać z fragmentów kodu z bieżącego laboratorium oraz
 
 **WYMAGANA STRUKTURA SPRAWOZDANIA:**
 1. **Strona tytułowa:** imię i nazwisko, temat laboratorium oraz data wykonania laboratorium.
-2. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione oraz jak te zmiany wpłynęły na wykresy lub wyniki.
-3. **Rozwiązanie każdego zadania** — dla Zadania 1–4 przygotuj osobny podrozdział zawierający:
+2. **Parametry losowe:** wpisany numer `nr` oraz kod losowania wraz z wylosowanymi wartościami.
+3. **Wnioski i spostrzeżenia z przykładów 1–3:** opisz, co realizuje każdy przykład, jakie parametry zostały zmienione (w tym wybrany eksperyment „Twoja kolej”) oraz jak te zmiany wpłynęły na wykresy lub wyniki.
+4. **Rozwiązanie każdego zadania** — dla Zadania 1–4 (oraz 5★, jeśli je wykonujesz) przygotuj osobny podrozdział zawierający:
    - koncepcję rozwiązania,
    - kod źródłowy,
    - wyniki (wykresy i/lub tabele),
    - wnioski dotyczące danego zadania.
-4. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
+5. **Podsumowanie całego laboratorium:** najważniejsze obserwacje, odniesienie do teorii i krótkie podsumowanie zdobytych umiejętności.
 
 **UWAGI TECHNICZNE:**
 - Stosuj podział na rozdziały i podrozdziały wszędzie tam, gdzie poprawia on czytelność dokumentu.
